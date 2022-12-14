@@ -3,16 +3,24 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build:dev": "npm run clear && npm run env:hmg next build && next export",
+    "env:dev": "cross-env ACTIVE_ENV=dev",
+    "start": "npm run env:dev next dev",
+    "start:prod": "npm run env:dev next start",
+    "lint": "next lint",
+    "dev": "next dev"
   },
   "dependencies": {
+    "axios": "^1.1.3",
     "eslint": "8.27.0",
     "eslint-config-next": "13.0.3",
     "next": "13.0.3",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sass": "^1.56.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.0.3"
   }
 }
