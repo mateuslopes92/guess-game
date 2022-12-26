@@ -13,6 +13,9 @@ const myLoader = ({ src, width, quality }) => {
 export default function Home({ game, games, token }) {
   const [searchData, setSearchData] = useState([]);
   const [gameQuery, setGameQuery] = useState('');
+  const [attempts, setAttempts] = useState(0);
+  const [gameIndex, setGameIndex] = useState(0);
+  const [imageStyle, setImageStyle] = useState(styles.image);
 
   useEffect(() => {
     configureToken(token);
@@ -34,6 +37,38 @@ export default function Home({ game, games, token }) {
     setGameQuery(query);
   }
 
+  const checkChoice = (gameName) => {
+    setAttempts(attempts + 1);
+    // setSearchData([]);
+    if (attempts <= 3) {
+      if (gameName === game.name) {
+        console.log("mesmoNome");
+        setAttempts(0);
+        setGameIndex(gameIndex + 1);
+      } else {
+        console.log("nome diferente");
+        console.log("attempts", attempts);
+        switch (attempts) {
+          case 1:
+            setImageStyle(styles.image2);
+            break;
+          case 2:
+            setImageStyle(styles.image3);
+            break;
+          case 3:
+            setImageStyle(styles.image4);
+            break;
+
+          default:
+            setImageStyle(styles.image);
+            break;
+        }
+      }
+    } else {
+      return
+    }
+  }
+
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Guess Image</h1>
@@ -41,7 +76,7 @@ export default function Home({ game, games, token }) {
 
       <div className={styles.imgContainer}>
         <Image
-          className={styles.image}
+          className={imageStyle}
           loader={myLoader}
           width={450}
           height={450}
@@ -61,18 +96,17 @@ export default function Home({ game, games, token }) {
         </div>
         {
           searchData.length > 0 && (
-              <ul className={styles.gameList}>
-                {
-                  searchData.map(value => {
-                    console.log(value)
-                    return (
-                      <li key={value.id} className={styles.gameItem}>
-                        <span>{value?.name}</span>
-                      </li>
-                    );
-                  })
-                }
-              </ul>
+            <ul className={styles.gameList}>
+              {
+                searchData.map(value => {
+                  return (
+                    <li key={value.id} className={styles.gameItem} onClick={() => checkChoice(value?.name)}>
+                      <span>{value?.name}</span>
+                    </li>
+                  );
+                })
+              }
+            </ul>
           )
         }
       </div>

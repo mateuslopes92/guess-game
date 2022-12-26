@@ -79,7 +79,19 @@
 }
 
 .image {
-  filter: blur(8px);
+  filter: blur(10px);
+}
+
+.image2 {
+  filter: blur(5px);
+}
+
+.image3 {
+  filter: blur(2px);
+}
+
+.image4 {
+  filter: blur(0px);
 }
 
 .gameList {
@@ -89,4 +101,12 @@
   background-color: #ffffff;
   list-style: none;
   padding-left: 0.5rem;
+}
+
+.gameItem {
+  width: 100%;
+  &:hover {
+    background-color: #ececec;
+    cursor: pointer;
+  }
 }

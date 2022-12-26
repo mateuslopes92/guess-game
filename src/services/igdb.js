@@ -42,6 +42,8 @@ export const getGamesImage = async (token) => {
     console.log('getGamesImage error =>', error);
   }
 
+  console.log(response.data)
+
   return response;
 }
 
