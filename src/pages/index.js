@@ -10,12 +10,15 @@ const myLoader = ({ src, width, quality }) => {
   return src
 }
 
-export default function Home({ game, games, token }) {
+export default function Home({ games, token }) {
+  const [gameData, setGameData] = useState({});
   const [searchData, setSearchData] = useState([]);
   const [gameQuery, setGameQuery] = useState('');
   const [attempts, setAttempts] = useState(0);
   const [gameIndex, setGameIndex] = useState(0);
   const [imageStyle, setImageStyle] = useState(styles.image);
+
+  console.log(gameData);
 
   useEffect(() => {
     configureToken(token);
@@ -24,6 +27,22 @@ export default function Home({ game, games, token }) {
     }
   },[]);
 
+  useEffect(() => {
+    getGameImage();
+  }, [gameIndex]);
+
+  const getGameImage = async () => {
+    await getGames(games[gameIndex]?.game, token).then(response => {
+      if(response?.data){
+        setGameData({
+          ...response.data[0],
+          img_url: `https:${games[gameIndex]?.url}`
+        })
+      }
+    });
+
+  }
+
   const handleFindGame = async() => {
     await searchGame(gameQuery, token).then(response => {
       console.log(response)
@@ -31,6 +50,7 @@ export default function Home({ game, games, token }) {
         setSearchData(response.data)
       }
     });
+    // checkChoice(); verificar se o jogo e o que foi escrito
   }
 
   const findGame = async (query) => {
@@ -41,26 +61,41 @@ export default function Home({ game, games, token }) {
     setAttempts(attempts + 1);
     // setSearchData([]);
     if (attempts <= 3) {
-      if (gameName === game.name) {
+      if (gameName?.toLowerCase() === gameData.name.toLowerCase() || gameQuery?.toLowerCase() === gameData.name.toLowerCase()) {
         console.log("mesmoNome");
         setAttempts(0);
         setGameIndex(gameIndex + 1);
+        setGameQuery('');
+        setSearchData([]);
+        setImageStyle(styles.image);
+        window.alert("Parabens! Voce acertou, proximo jogo!");
       } else {
         console.log("nome diferente");
         console.log("attempts", attempts);
         switch (attempts) {
           case 1:
-            setImageStyle(styles.image2);
+              setImageStyle(styles.image2);
+              setGameQuery('');
+              setSearchData([]);
+              window.alert("2 tentativas restantes!");
             break;
           case 2:
-            setImageStyle(styles.image3);
+              setImageStyle(styles.image3);
+              setGameQuery('');
+              setSearchData([]);
+              window.alert("1 tentativas restantes!");
             break;
           case 3:
-            setImageStyle(styles.image4);
+              setImageStyle(styles.image4);
+              setGameQuery('');
+              setSearchData([]);
+              window.alert("Perdeu! O nome do jogo é " + gameData.name);
             break;
 
           default:
-            setImageStyle(styles.image);
+              setImageStyle(styles.image);
+              setGameQuery('');
+              setSearchData([]);
             break;
         }
       }
@@ -81,13 +116,14 @@ export default function Home({ game, games, token }) {
           width={450}
           height={450}
           alt='img'
-          src={game.img_url}
+          src={gameData?.img_url}
         />
       </div>
 
       <div>
         <div>
           <input
+            value={gameQuery}
             placeholder='Qual o nome do jogo acima?'
             className={styles.input}
             onChange={e => findGame(e.target.value)}
@@ -132,16 +168,11 @@ export const getServerSideProps = async () => {
   }
 
   const gameImage = await getGamesImage(token);
-  const games = await getGames(gameImage?.data[0]?.game, token).then(response => response.data);
+  // const games = await getGames(gameImage?.data[0]?.game, token).then(response => response.data);
 
-  const game = {
-    ...games['0'],
-    img_url: `https:${gameImage?.data[0]?.url}`
-  }
 
   return {
     props: {
-      game,
       games: gameImage.data,
       token
     }

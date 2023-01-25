@@ -8,11 +8,11 @@ export const getGames = async (id, token) => {
 
   try {
     response = await axios.post(
-      process.env.IGDB_BASE_URL,
+      urlGames,
       fields, {
         headers: {
           Authorization: `Bearer ${token}`,
-          'Client-Id': process.env.CLIENT_ID,
+          'Client-Id': process.env.NEXT_PUBLIC_CLIENT_ID,
         },
       }
     );
